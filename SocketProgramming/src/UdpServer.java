@@ -5,16 +5,11 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class Rfc865UdpServer {
-    // quote of the day protocol
+public class UdpServer {
+    private static final int PORT_NUMBER = 8000;
+    private static final int BUFFER_LENGTH = 2048;
 
-    private static final int PORT_NUMBER = 8000; // RFC865
-    private static final int QUOTE_LENGTH = 512; // RFC865
-    private static final String END_MESSAGE = "end";
-
-    // buffer size of 2048 should be more than enough
-    private static byte[] readBuffer = new byte[QUOTE_LENGTH];
-    private static byte[] writeBuffer = new byte[QUOTE_LENGTH];
+    private static byte[] buffer = new byte[BUFFER_LENGTH];
 
     public static void main(String[] args) {
 
@@ -23,6 +18,8 @@ public class Rfc865UdpServer {
 
         try {
             InetAddress address = InetAddress.getLocalHost();
+            System.out.println("Server address: " + address.toString());
+
             socket = new DatagramSocket(PORT_NUMBER, address);
 
         } catch (UnknownHostException unknownHostException) {
@@ -53,41 +50,40 @@ public class Rfc865UdpServer {
             return;
         }
 
+        System.out.println("Listening for requests...");
+
         while (true) {
 
             try {
                 // 2. listen for UDP request from client
-                DatagramPacket request = new DatagramPacket(readBuffer, QUOTE_LENGTH);
+                DatagramPacket request = new DatagramPacket(buffer, BUFFER_LENGTH);
                 socket.receive(request);
 
-                String messageReceived = new String(request.getData());
+                String messageReceived = new String(
+                    request.getData(), 
+                    request.getOffset(), 
+                    request.getLength()
+                );
                 System.out.println("From client: " + messageReceived);
 
-                String messageToSend = "Server received \"" + messageReceived + "\"";
+                String messageToSend = "Jason's computer received \"" + 
+                    messageReceived + "\"";
 
-                if (messageToSend.length() > QUOTE_LENGTH)
-                    messageToSend = messageToSend.substring(0, QUOTE_LENGTH);
-
-                writeBuffer = messageToSend.getBytes();
+                buffer = messageToSend.getBytes();
 
                 InetAddress clientAddress = request.getAddress();
                 int clientPort = request.getPort();
 
-                readBuffer = new byte[QUOTE_LENGTH];
-
                 // 3. send UDP reply to client
                 DatagramPacket response = new DatagramPacket(
-                    writeBuffer, 
-                    writeBuffer.length,
+                    buffer, 
+                    buffer.length,
                     clientAddress,
                     clientPort
                 );
                 socket.send(response);
 
-                writeBuffer = new byte[QUOTE_LENGTH];
-
-                if (messageReceived.endsWith(END_MESSAGE))
-                    break;
+                buffer = new byte[BUFFER_LENGTH];
 
             } catch (IOException ioException) {
 
@@ -100,6 +96,8 @@ public class Rfc865UdpServer {
                     "Stack Trace:\n" + 
                     ioException.getStackTrace()
                 );
+
+                break;
             } 
         }
 

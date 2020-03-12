@@ -5,25 +5,27 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-class Rfc865UdpClient {
+class UdpClient {
+    // server is lab server
+    // private static final String LAB_SERVER_NAME = "SWL2-RM1-vL01";
+    private static final String LAB_SERVER_IP_ADDRESS = "172.21.151.239";
+    private static final int LAB_SERVER_PORT_NUMBER = 17;
 
-    // quote of the day protocol
+    private static final String CLIENT_IP_ADDRESS = "172.21.149.160";
+    private static final int CLIENT_PORT_NUMBER = 8001;
 
-    private static final int PORT_NUMBER = 8001; // RFC865
-    private static final int QUOTE_LENGTH = 512; // RFC865
-    private static final String END_MESSAGE = "end";
+    private static final String MY_NAME = "NgoJunHaoJason";
+    private static final String LAB_GROUP = "TS1";
 
-    // buffer size of 2048 should be more than enough
-    private static byte[] readBuffer = new byte[QUOTE_LENGTH];
-    private static byte[] writeBuffer = new byte[QUOTE_LENGTH];
+    private static byte[] buffer;
 
     public static void main(String[] args) {
 
         // 1. open UDP socket at well-known port
-        DatagramSocket socket = null;
+        DatagramSocket clientSocket = null;
 
         try {
-            socket = new DatagramSocket(PORT_NUMBER);
+            clientSocket = new DatagramSocket(CLIENT_PORT_NUMBER);
 
         } catch (SocketException socketException) {
 
@@ -40,35 +42,34 @@ class Rfc865UdpClient {
             return;
         }
 
+        String messageToSend = MY_NAME + ", " + LAB_GROUP + ", " + CLIENT_IP_ADDRESS;
+        buffer = messageToSend.getBytes();
+
         try {
-            String messageToSend = END_MESSAGE;
-
-            if (messageToSend.length() > QUOTE_LENGTH)
-                messageToSend = messageToSend.substring(0, QUOTE_LENGTH);
-
-            writeBuffer = messageToSend.getBytes();
+            // InetAddress serverAddress = InetAddress.getByName(LAB_SERVER_NAME);
+            InetAddress serverAddress = InetAddress.getByName(LAB_SERVER_IP_ADDRESS);
 
             // 2. send UDP request to server
-            InetAddress serverAddress = InetAddress.getLocalHost();
-
             DatagramPacket request = new DatagramPacket(
-                writeBuffer, 
-                writeBuffer.length,
+                buffer, 
+                buffer.length,
                 serverAddress,
-                8000 // server port
+                LAB_SERVER_PORT_NUMBER
             );
-            socket.send(request);
-
-            writeBuffer = new byte[QUOTE_LENGTH];
+            clientSocket.send(request);
 
             // 3. receive UDP reply from server
-            DatagramPacket response = new DatagramPacket(readBuffer, QUOTE_LENGTH);
-            socket.receive(response);
+            buffer = new byte[2048];
+            DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+            clientSocket.receive(response);
 
-            String messageReceived = new String(request.getData());
+            String messageReceived = new String(
+                response.getData(), 
+                response.getOffset(), 
+                response.getLength()
+            
+                );
             System.out.println("From server: " + messageReceived);
-
-            readBuffer = new byte[QUOTE_LENGTH];
 
         } catch (UnknownHostException unknownHostException) {
 
@@ -95,7 +96,7 @@ class Rfc865UdpClient {
             );
         } 
 
-        if (socket != null)
-            socket.close();
+        if (clientSocket != null)
+            clientSocket.close();
     }
 }
