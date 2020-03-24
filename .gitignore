@@ -1,9 +1,10 @@
-# Java
-
 # IDE
 .classpath
 .project
-.settings/
+.settings
+.vscode
+
+# Java
 
 # Compiled class file
 *.class

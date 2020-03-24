@@ -26,4 +26,8 @@ socket programming
 
 ## lab 4
 
-network traffic analysis
+network traffic analysis (TODO)
+
+## assignment 1
+
+Python version: 3.7.4
