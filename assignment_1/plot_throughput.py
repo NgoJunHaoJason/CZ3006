@@ -3,15 +3,14 @@ import matplotlib.pyplot as plt
 
 
 from mac_protocols_throughput import slotted_aloha_throughput, pure_aloha_throughput, \
-    non_persistent_csma_throughput, one_persistent_csma_throughput
+    non_persistent_csma_throughput, one_persistent_csma_throughput, \
+    approximate_p_persistent_csma_throughput
 
 
-smooth_factor = 20  # to make the curve smooth
-a = 0.01  # normalised_propagation_delay; for CSMA
+smooth_factor = 100  # to make the curve smooth
+a = 0.02  # normalised_propagation_delay; for CSMA
 
-plt.figure(figsize=(16, 8))
-
-offered_load_rate = [G / smooth_factor for G in range(10 * smooth_factor)]
+offered_load_rate = [G / smooth_factor for G in range(1, 100 * smooth_factor)]
 
 # reference: Kleinrock-Tobagi paper
 mac_protocols = {
@@ -19,7 +18,10 @@ mac_protocols = {
     'pure ALOHA': pure_aloha_throughput,
     'non-persistent CSMA': (lambda G: non_persistent_csma_throughput(G, a)),
     '1-persistent CSMA': (lambda G: one_persistent_csma_throughput(G, a)),
+    '0.07-persistent CSMA': (lambda G: approximate_p_persistent_csma_throughput(G, 0.07, a)),
 }
+
+plt.figure(figsize=(16, 8))
 
 for mac_protocol in mac_protocols:
     throughput = [
@@ -31,11 +33,14 @@ for mac_protocol in mac_protocols:
 
 plt.title(
     'Comparison of the channel utilization versus load '
-    'for various random access protocols'
+    f'for various random access protocols (a = {a})'
 )
 plt.xlabel('G (offered load rate)')
 plt.ylabel('S (throughput)')
 
-plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+plt.xscale('log')
 
+plt.legend()
+
+plt.savefig('assignment_1/mac_protocols_throughput.png')
 plt.show()
