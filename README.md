@@ -1,6 +1,6 @@
 # CZ3006
 
-Net-Centric Computing / Computer Networks
+Net-Centric Computing / Computer Networks (Academic Year 2019-2020 Semester 2)
 
 ## Lab 2
 
