@@ -30,4 +30,9 @@ network traffic analysis (TODO)
 
 ## assignment 1
 
-Python version: 3.7.4
+plot throughput of various MAC protocols similar to figure 9 of Kleinrock-Tobagi paper
+
+### dependencies
+
+- Python version: 3.7.4
+- libraries in requirements.txt
