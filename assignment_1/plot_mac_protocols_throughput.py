@@ -1,9 +1,6 @@
-"""
-This file contains functions for calculating throughput for various MAC protocols.
-All functions take G as their only parameter,
-where G is the offered load rate
-"""
 import math
+import matplotlib.pyplot as plt
+
 
 # reference: Kleinrock-Tobagi paper
 
@@ -50,6 +47,7 @@ def one_persistent_csma_throughput(G, a):
     return numerator / denominator
 
 
+# equation A1
 def approximate_p_persistent_csma_throughput(G, p, a):
     """
     params:
@@ -69,7 +67,8 @@ def approximate_p_persistent_csma_throughput(G, p, a):
 
     # refer to proof in Appendix A
 
-    pi_0_exp_p_minus_pi_0 = pi_0**p - pi_0  # no need recalculate later
+    # store value in variable to avoid recalculation
+    pi_0_exp_p_minus_pi_0 = pi_0**p - pi_0
 
     t_bar_hat = pi_0_exp_p_minus_pi_0 / (
         1 - pi_0 - pi_0_exp_p_minus_pi_0 * math.e**(-p * g)
@@ -87,7 +86,7 @@ def approximate_p_persistent_csma_throughput(G, p, a):
 
     P_s_hat = P_s_hat_first_term - P_s_hat_second_term
 
-    # no need to recalculate later
+    # store value in variable to avoid recalculation
     e_exp_neg_g_exp_p_minus_e_exp_neg_g = (math.e**-g)**p - math.e**-g
 
     t_bar_hat_prime = e_exp_neg_g_exp_p_minus_e_exp_neg_g / (
@@ -106,7 +105,8 @@ def approximate_p_persistent_csma_throughput(G, p, a):
 
     P_s_hat_prime = P_s_hat_prime_first_term - P_s_hat_prime_second_term
     
-    one_minus_e_exp_neg_a_G = 1 - math.e**(-a * G)  # no need recalculate later
+    # store value in variable to avoid recalculation
+    one_minus_e_exp_neg_a_G = 1 - math.e**(-a * G)
 
     numerator = one_minus_e_exp_neg_a_G * (
         P_s_hat_prime * pi_0 + P_s_hat * (1 - pi_0)
@@ -117,3 +117,50 @@ def approximate_p_persistent_csma_throughput(G, p, a):
     ) + a * pi_0
 
     return numerator / denominator
+
+
+
+def plot_mac_protocols_throughput():
+    # to make the curve smooth
+    # bigger number -> interpolate between more points -> smoother surve
+    smooth_factor = 100
+
+    a = 0.02  # normalised_propagation_delay; for CSMA
+
+    offered_load_rate = [G / smooth_factor for G in range(1, 100 * smooth_factor)]
+
+    mac_protocols = {
+        'slotted ALOHA': slotted_aloha_throughput,
+        'pure ALOHA': pure_aloha_throughput,
+        'non-persistent CSMA': (lambda G: non_persistent_csma_throughput(G, a)),
+        '1-persistent CSMA': (lambda G: one_persistent_csma_throughput(G, a)),
+        '0.07-persistent CSMA': (lambda G: approximate_p_persistent_csma_throughput(G, 0.07, a)),
+    }
+
+    plt.figure(figsize=(16, 8))
+
+    for mac_protocol in mac_protocols:
+        throughput = [
+            mac_protocols[mac_protocol](G) 
+            for G in offered_load_rate
+        ]
+
+        plt.plot(offered_load_rate, throughput, label=mac_protocol)
+
+    plt.title(
+        'Comparison of the channel utilization versus load '
+        f'for various random access protocols (a = {a})'
+    )
+    plt.xlabel('G (offered load rate)')
+    plt.ylabel('S (throughput)')
+
+    plt.xscale('log')
+
+    plt.legend()
+
+    plt.savefig('assignment_1/mac_protocols_throughput.png')
+    plt.show()
+
+
+if __name__ == '__main__':
+    plot_mac_protocols_throughput()
