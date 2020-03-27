@@ -1,3 +1,10 @@
+"""
+Run this script to plot figure for CZ3006 assignment 1.
+
+dependencies:
+- Python: 3.7.4
+- matplotlib: 3.2.1
+"""
 import math
 import matplotlib.pyplot as plt
 
@@ -10,25 +17,6 @@ slotted_aloha_throughput = lambda G: G * math.e**-G
 
 # equation 1
 pure_aloha_throughput = lambda G: G * math.e**(-2 * G)
-
-
-# equation 3
-def non_persistent_csma_throughput(G, a):
-    """
-    params:
-    - G (float): offered load rate
-    - a (float): normalised propagation delay
-
-    return:
-    (float) non-persistent CSMA throughput
-    """
-    # time during a cycle that the channel is used without conflicts
-    U_bar = math.e**(-a * G)
-
-    numerator = G * U_bar
-    denominator = G * (1 + 2*a) + U_bar
-
-    return numerator / denominator
 
 
 # equation 10
@@ -65,9 +53,9 @@ def approximate_p_persistent_csma_throughput(G, p, a):
 
     q = 1 - p
 
-    # refer to proof in Appendix A
+    # refer to proof in Appendix A for the following formulas
 
-    # store value in variable to avoid recalculation
+    # store value in variable to avoid recomputation
     pi_0_exp_p_minus_pi_0 = pi_0**p - pi_0
 
     t_bar_hat = pi_0_exp_p_minus_pi_0 / (
@@ -86,7 +74,7 @@ def approximate_p_persistent_csma_throughput(G, p, a):
 
     P_s_hat = P_s_hat_first_term - P_s_hat_second_term
 
-    # store value in variable to avoid recalculation
+    # store value in variable to avoid recomputation
     e_exp_neg_g_exp_p_minus_e_exp_neg_g = (math.e**-g)**p - math.e**-g
 
     t_bar_hat_prime = e_exp_neg_g_exp_p_minus_e_exp_neg_g / (
@@ -105,7 +93,7 @@ def approximate_p_persistent_csma_throughput(G, p, a):
 
     P_s_hat_prime = P_s_hat_prime_first_term - P_s_hat_prime_second_term
     
-    # store value in variable to avoid recalculation
+    # store value in variable to avoid recomputation
     one_minus_e_exp_neg_a_G = 1 - math.e**(-a * G)
 
     numerator = one_minus_e_exp_neg_a_G * (
@@ -117,7 +105,6 @@ def approximate_p_persistent_csma_throughput(G, p, a):
     ) + a * pi_0
 
     return numerator / denominator
-
 
 
 def plot_mac_protocols_throughput():
@@ -132,7 +119,6 @@ def plot_mac_protocols_throughput():
     mac_protocols = {
         'slotted ALOHA': slotted_aloha_throughput,
         'pure ALOHA': pure_aloha_throughput,
-        'non-persistent CSMA': (lambda G: non_persistent_csma_throughput(G, a)),
         '1-persistent CSMA': (lambda G: one_persistent_csma_throughput(G, a)),
         '0.07-persistent CSMA': (lambda G: approximate_p_persistent_csma_throughput(G, 0.07, a)),
     }
@@ -148,8 +134,8 @@ def plot_mac_protocols_throughput():
         plt.plot(offered_load_rate, throughput, label=mac_protocol)
 
     plt.title(
-        'Comparison of the channel utilization versus load '
-        f'for various random access protocols (a = {a})'
+        'Comparison of the channel utilization versus load for various ' 
+        f'random access protocols (normalised propagation delay = {a})'
     )
     plt.xlabel('G (offered load rate)')
     plt.ylabel('S (throughput)')
