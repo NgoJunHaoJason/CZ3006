@@ -1,8 +1,13 @@
 backcall==0.1.0
+cachetools==4.0.0
 cairocffi==1.1.0
+certifi==2019.11.28
 cffi==1.14.0
+chardet==3.0.4
 cycler==0.10.0
 decorator==4.4.2
+idna==2.9
+ipinfo==3.0.0
 ipykernel==5.2.0
 ipython==7.13.0
 ipython-genutils==0.2.0
@@ -26,8 +31,10 @@ python-dateutil==2.8.1
 python-igraph==0.8.0
 pytz==2019.3
 pyzmq==19.0.0
+requests==2.23.0
 six==1.14.0
 texttable==1.6.2
 tornado==6.0.4
 traitlets==4.3.3
+urllib3==1.25.8
 wcwidth==0.1.9
