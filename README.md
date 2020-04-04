@@ -24,15 +24,22 @@ socket programming
 - [StackOverflow](https://stackoverflow.com/a/5837783/9171260)
 - [Article](https://systembash.com/a-simple-java-udp-server-and-udp-client/)
 
-## lab 4
+## Lab 4
 
-network traffic analysis (TODO)
+network traffic analysis
 
-## assignment 1
+### directory structure
+
+- `data/test_SFlow_data.csv` - practice data
+- `data/SFlow_Data_lab4.csv` - actual data
+- `analyse_small_data.ipynb` - analysis of practice data
+- `analyse_net_traffic.ipynb` - analysis of actual data
+
+## Assignment 1
 
 plot throughput of various MAC protocols similar to figure 9 of Kleinrock-Tobagi paper
 
-### dependencies
+## Lab 4 and Assignment 1 dependencies
 
 - Python version: 3.7.4
 - libraries in requirements.txt
