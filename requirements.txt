@@ -25,7 +25,7 @@ prompt-toolkit==3.0.5
 ptyprocess==0.6.0
 pycairo==1.19.1
 pycparser==2.20
-Pygments==2.6.1
+Pygments==2.7.4
 pyparsing==2.4.6
 python-dateutil==2.8.1
 python-igraph==0.8.0
