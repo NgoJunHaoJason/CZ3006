@@ -13,7 +13,7 @@ ipython==7.16.3
 ipython-genutils==0.2.0
 jedi==0.16.0
 jupyter-client==6.1.2
-jupyter-core==4.6.3
+jupyter-core==4.11.2
 kiwisolver==1.1.0
 matplotlib==3.2.1
 numpy==1.22.0
